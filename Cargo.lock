@@ -52,6 +52,7 @@ name = "vigil"
 version = "0.1.0"
 dependencies = [
  "vigil-core",
+ "vigil-service",
  "serde",
  "serde_json",
  "tauri",
@@ -70,6 +71,16 @@ version = "0.1.0"
 dependencies = [
  "png 0.18.1",
  "serde",
+ "windows",
+]
+
+[[package]]
+name = "vigil-service"
+version = "0.1.0"
+dependencies = [
+ "vigil-core",
+ "serde",
+ "serde_json",
  "windows",
 ]
 
