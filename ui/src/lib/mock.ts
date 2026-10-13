@@ -596,7 +596,14 @@ export const taskManager = {
     canEnable: !taskManagerEnabled,
     canRestore: taskManagerEnabled,
     recoveryPath: "C:\\Program Files\\Vigil Privileged\\vigil-taskmgr-recover.exe",
-    detail: taskManagerEnabled ? "任务管理器入口已交给 Vigil。" : "当前使用 Windows 任务管理器。",
+    detail:
+      mockSettings.locale === "en-US"
+        ? taskManagerEnabled
+          ? "Task Manager shortcuts open Vigil."
+          : "Windows Task Manager is in use."
+        : taskManagerEnabled
+          ? "任务管理器入口已交给 Vigil。"
+          : "当前使用 Windows 任务管理器。",
   }),
   manage: async (action: "enable" | "restore") => {
     taskManagerEnabled = action === "enable";
