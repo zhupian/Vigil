@@ -15,7 +15,7 @@
 !define VIGIL_TEXT 0x50000101 ; WS_CHILD | WS_VISIBLE | SS_CENTER | SS_NOTIFY
 !define VIGIL_LABEL 0x50000100 ; WS_CHILD | WS_VISIBLE | SS_NOTIFY
 !define VIGIL_PATH 0x50008100 ; … | SS_PATHELLIPSIS
-!define VIGIL_IMAGE 0x5000010E ; WS_CHILD | WS_VISIBLE | SS_NOTIFY | SS_BITMAP
+!define VIGIL_BUTTON 0x50018080 ; WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_BITMAP | BS_FLAT
 !define VIGIL_ICON 0x50000043 ; WS_CHILD | WS_VISIBLE | SS_ICON | SS_REALSIZECONTROL
 !define VIGIL_CHECK 0x50010003 ; WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_AUTOCHECKBOX
 !define /ifndef SS_CENTER 0x1
@@ -148,6 +148,11 @@ Var VigilFontBody
 Var VigilFontSmall
 Var VigilFontButton
 Var VigilCheckBox ; the page's check box (see VigilCheck)
+Var VigilButtonBitmap
+Var VigilMainButton
+Var VigilButtonState
+Var VigilHoverRef
+Var VigilPressedRef
 
 !macro VigilScale VAR VALUE
   IntOp ${VAR} ${VALUE} * $VigilDpi
@@ -237,20 +242,28 @@ Var VigilCheckBox ; the page's check box (see VigilCheck)
 !macro VigilLink OUT Y W TEXT
   IntOp $R0 $VigilWidth - ${W}
   IntOp $R0 $R0 / 2
-  !insertmacro VigilControl ${OUT} dialog STATIC ${VIGIL_TEXT} 0 $R0 ${Y} ${W} 22 "${TEXT}" $VigilFontBody
+  !insertmacro VigilControl ${OUT} dialog LINK ${__NSD_Link_STYLE} 0 $R0 ${Y} ${W} 22 "${TEXT}" $VigilFontBody
   !insertmacro VigilPaint ${OUT} link
 !macroend
 
-; A flat accent button, W × 40 (at 96 DPI) and centered: a static control
-; showing a bitmap of it. ENABLED 0 draws it grayed out.
+; A native button keeps keyboard navigation, accessibility, pressed/focus/hot
+; feedback. Its bitmap supplies the accent color and rounded face.
 !macro VigilButton OUT Y W TEXT ENABLED
   IntOp $R0 $VigilWidth - ${W}
   IntOp $R0 $R0 / 2
-  !insertmacro VigilControl ${OUT} dialog STATIC ${VIGIL_IMAGE} 0 $R0 ${Y} ${W} 40 "" 0
+  !insertmacro VigilControl ${OUT} dialog BUTTON ${VIGIL_BUTTON} 0 $R0 ${Y} ${W} 40 "${TEXT}" $VigilFontButton
+  EnableWindow ${OUT} ${ENABLED}
+  StrCpy $VigilMainButton ${OUT}
+  StrCpy $VigilButtonState -1
   Push ${OUT}
   Push "${TEXT}"
   Push ${ENABLED}
   !insertmacro VigilCall VigilDrawButton
+  !ifdef __UNINSTALL__
+    ${NSD_CreateTimer} un.VigilButtonFeedback 50
+  !else
+    ${NSD_CreateTimer} VigilButtonFeedback 50
+  !endif
 !macroend
 
 ; A check box with its label, centered together at Y; OUT is the box. A themed
@@ -314,6 +327,8 @@ Function ${UN}VigilLoadTheme
     !insertmacro VigilColorRef $VigilOnAccentRef ${VIGIL_DARK_ON_ACCENT}
     !insertmacro VigilColorRef $VigilTrackRef ${VIGIL_DARK_TRACK}
     !insertmacro VigilColorRef $VigilInk3Ref ${VIGIL_DARK_INK3}
+    !insertmacro VigilColorRef $VigilHoverRef 67CCFF
+    !insertmacro VigilColorRef $VigilPressedRef 3AA5DB
   ${Else}
     StrCpy $VigilDark 0
     !insertmacro VigilColorRef $VigilBgRef ${VIGIL_LIGHT_BG}
@@ -321,6 +336,8 @@ Function ${UN}VigilLoadTheme
     !insertmacro VigilColorRef $VigilOnAccentRef ${VIGIL_LIGHT_ON_ACCENT}
     !insertmacro VigilColorRef $VigilTrackRef ${VIGIL_LIGHT_TRACK}
     !insertmacro VigilColorRef $VigilInk3Ref ${VIGIL_LIGHT_INK3}
+    !insertmacro VigilColorRef $VigilHoverRef 005BAA
+    !insertmacro VigilColorRef $VigilPressedRef 005094
   ${EndIf}
 
   ; GDI+ draws the buttons (anti-aliased corners).
@@ -403,9 +420,64 @@ Function ${UN}VigilHideButtons
   ${Next}
 FunctionEnd
 
-; Draws the button bitmap for the static control on the stack (see VigilButton).
+; Native buttons handle input. Poll only their visual state, redrawing once
+; per change. Release the timer and bitmap when the page closes.
+Function ${UN}VigilButtonFeedback
+  Push $0
+  Push $1
+  Push $2
+  Push $3
+  Push $4
+  Push $5
+  Push $6
+  System::Call 'user32::IsWindowEnabled(p $VigilMainButton) i .r0'
+  ${If} $0 <> 0
+    StrCpy $0 1
+    SendMessage $VigilMainButton ${BM_GETSTATE} 0 0 $1
+    IntOp $2 $1 & 8 ; BST_FOCUS
+    ${If} $2 <> 0
+      IntOp $0 $0 | 2
+    ${EndIf}
+    IntOp $2 $1 & 4 ; BST_PUSHED
+    ${If} $2 <> 0
+      IntOp $0 $0 | 8
+    ${EndIf}
+    System::Call '*(i, i) p .r1'
+    System::Call 'user32::GetCursorPos(p r1)'
+    System::Call '*$1(l .r2)'
+    System::Call 'user32::WindowFromPoint(l r2) p .r3'
+    System::Free $1
+    ${If} $3 = $VigilMainButton
+      IntOp $0 $0 | 4
+    ${EndIf}
+  ${EndIf}
+  ${If} $0 <> $VigilButtonState
+    StrCpy $VigilButtonState $0
+    System::Call 'user32::GetWindowTextW(p $VigilMainButton, w .r1, i ${NSIS_MAX_STRLEN})'
+    Push $VigilMainButton
+    Push $1
+    Push $0
+    Call ${UN}VigilDrawButton
+  ${EndIf}
+  Pop $6
+  Pop $5
+  Pop $4
+  Pop $3
+  Pop $2
+  Pop $1
+  Pop $0
+FunctionEnd
+
+Function ${UN}VigilReleaseButton
+  ${NSD_KillTimer} ${UN}VigilButtonFeedback
+  System::Call 'gdi32::DeleteObject(p $VigilButtonBitmap)'
+  StrCpy $VigilButtonBitmap 0
+  StrCpy $VigilMainButton 0
+FunctionEnd
+
+; Draws the button bitmap for the native control on the stack (see VigilButton).
 Function ${UN}VigilDrawButton
-  Pop $R9 ; enabled
+  Pop $R9 ; visual state: enabled, focused, hovered, pressed
   Pop $R8 ; text
   Pop $R7 ; control
   Push $0
@@ -418,9 +490,18 @@ Function ${UN}VigilDrawButton
   Push $7
   Push $8
   Push $9
-  ${If} $R9 = 1
+  IntOp $0 $R9 & 1
+  ${If} $0 <> 0
     StrCpy $8 $VigilAccentRef
     StrCpy $9 $VigilOnAccentRef
+    IntOp $0 $R9 & 4
+    ${If} $0 <> 0
+      StrCpy $8 $VigilHoverRef
+    ${EndIf}
+    IntOp $0 $R9 & 8
+    ${If} $0 <> 0
+      StrCpy $8 $VigilPressedRef
+    ${EndIf}
   ${Else}
     StrCpy $8 $VigilTrackRef
     StrCpy $9 $VigilInk3Ref
@@ -477,10 +558,20 @@ Function ${UN}VigilDrawButton
   System::Call 'gdi32::SetTextColor(p r1, i r9)'
   System::Call 'user32::DrawTextW(p r1, w R8, i -1, p r6, i 0x25)' ; DT_CENTER | DT_VCENTER | DT_SINGLELINE
 
+  IntOp $0 $R9 & 2
+  ${If} $0 <> 0
+    ${VigilScale} $0 4
+    IntOp $4 $4 - $0
+    IntOp $5 $5 - $0
+    System::Call '*$6(i r0, i r0, i r4, i r5)'
+    System::Call 'user32::DrawFocusRect(p r1, p r6)'
+  ${EndIf}
+
   System::Call 'gdi32::SelectObject(p r1, p r3)'
   System::Call 'gdi32::DeleteDC(p r1)'
   System::Free $6
-  SendMessage $R7 ${STM_SETIMAGE} 0 $2 $0
+  SendMessage $R7 ${BM_SETIMAGE} 0 $2 $0
+  StrCpy $VigilButtonBitmap $2
   ${If} $0 <> 0
     System::Call 'gdi32::DeleteObject(p r0)'
   ${EndIf}
@@ -636,13 +727,14 @@ Function VigilPageMain
   !insertmacro VigilPaint $VigilLocationText ink3
   ${If} $VigilCompare = 2
     IntOp $3 $VigilWidth - 88
-    !insertmacro VigilControl $1 dialog STATIC ${VIGIL_LABEL} 0 $3 $2 64 20 "$(VigilChange)" $VigilFontSmall
+    !insertmacro VigilControl $1 dialog LINK ${__NSD_Link_STYLE} 0 $3 $2 64 20 "$(VigilChange)" $VigilFontSmall
     !insertmacro VigilPaint $1 link
     ${NSD_OnClick} $1 VigilChangeLocation
   ${EndIf}
 
   Call VigilHideButtons
   nsDialogs::Show
+  Call VigilReleaseButton
 FunctionEnd
 
 Function VigilPageMainLeave
@@ -711,6 +803,7 @@ Function VigilPageFinish
 
   Call VigilHideButtons
   nsDialogs::Show
+  Call VigilReleaseButton
 FunctionEnd
 
 Function VigilCloseOnly
@@ -749,6 +842,7 @@ Function un.VigilPageConfirm
 
   Call un.VigilHideButtons
   nsDialogs::Show
+  Call un.VigilReleaseButton
 FunctionEnd
 
 Function un.VigilPageConfirmLeave
@@ -786,4 +880,5 @@ Function un.VigilPageDone
 
   Call un.VigilHideButtons
   nsDialogs::Show
+  Call un.VigilReleaseButton
 FunctionEnd
