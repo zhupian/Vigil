@@ -32,12 +32,13 @@ pub fn task_manager_status() -> Result<vigil_service::taskmgr::Status, String> {
 
 #[tauri::command(async)]
 pub fn manage_task_manager(action: String) -> Result<vigil_service::taskmgr::Status, String> {
-    vigil_service::taskmgr::manage(&action).inspect_err(|e| {
+    vigil_service::taskmgr::manage(&action).map_err(|failure| {
         log::warn!(
-            "task manager {} failed: {}",
+            "task manager {} failed {}",
             vigil_core::diagnostics::action(&action),
-            vigil_core::diagnostics::failure(e)
-        )
+            failure.log()
+        );
+        failure.message
     })
 }
 
