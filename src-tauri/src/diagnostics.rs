@@ -215,7 +215,7 @@ pub fn log_privileged_state() {
             ),
         }
         match vigil_service::taskmgr::status() {
-            Ok(s) => log::info!("task manager replacement: {}", s.state),
+            Ok(s) => log::info!("task manager replacement: {}", s.summary()),
             Err(e) => log::warn!(
                 "task manager replacement status unavailable: {}",
                 vigil_core::diagnostics::failure(&e)
