@@ -1,5 +1,57 @@
 {
   "updated": "Vigil has been updated to {version}.",
+  "whatsNew": "What's new",
+  "readyToast": "Vigil {version} is ready to install",
+  "availableToast": "Vigil {version} is available",
+  "view": "View",
+  "button": {
+    "title": "Vigil {version} is ready. Click to see what's new and install it",
+    "availableTitle": "Vigil {version} is available. Click to see what's new"
+  },
+  "menu": {
+    "view": "See what's new",
+    "dismiss": "Don't remind me about this version"
+  },
+  "dialog": {
+    "ready": "Vigil {version} is ready",
+    "available": "Vigil {version} is available",
+    "downloading": "Downloading Vigil {version}",
+    "installing": "Starting the installer",
+    "installed": "What's new in Vigil {version}",
+    "current": "Current version",
+    "previous": "Before the update",
+    "next": "New version",
+    "stable": "Stable",
+    "beta": "Beta",
+    "released": "Released {date}",
+    "verified": "Signature verified",
+    "source": "From {source}",
+    "progress": "{received} of {total} downloaded",
+    "changes": {
+      "one": "{count} change",
+      "other": "{count} changes"
+    },
+    "earlier": "Notes for earlier versions are on GitHub.",
+    "empty": "There are no release notes to show. They're on GitHub.",
+    "language": "Release notes are written in Chinese.",
+    "hint": "Installing requires administrator permission. Vigil closes briefly and reopens on the same page when the installation finishes.",
+    "portable": "The portable version doesn't update automatically. Download the new version from the release page.",
+    "github": "View on GitHub",
+    "install": "Restart and update",
+    "starting": "Starting…",
+    "download": "Download",
+    "later": "Later",
+    "close": "Close"
+  },
+  "category": {
+    "breaking": "Breaking changes",
+    "feat": "New features",
+    "fix": "Fixes",
+    "perf": "Performance",
+    "revert": "Reverted",
+    "known": "Known limitations",
+    "other": "Other"
+  },
   "service": {
     "title": "Update the privileged service?",
     "body": "The privileged service is version {serviceVersion}, which doesn't match Vigil {version}. Some features may not work. Updating requires administrator permission.",
