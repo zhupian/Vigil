@@ -8,7 +8,7 @@
 
 请勿在公开的 Issue、讨论或拉取请求中披露安全漏洞。
 
-请通过 GitHub 的私密漏洞报告提交：在仓库的 **Security** 页面单击 **Report a vulnerability**，或直接打开[新建安全公告](https://github.com/Ray-lea/Vigil/security/advisories/new)。报告请尽量包含：
+请通过 GitHub 的私密漏洞报告提交：在仓库的 **Security** 页面单击 **Report a vulnerability**，或直接打开[新建安全公告](https://github.com/zhupian/Vigil/security/advisories/new)。报告请尽量包含：
 
 - 受影响的 Vigil 版本与 Windows 版本（`winver` 显示的版本号）；
 - 攻击者需要具备的条件，例如本机标准用户、另一个 Windows 账户、低完整性级别进程；

@@ -326,7 +326,7 @@
     },
     "license": {
       "title": "许可证",
-      "desc": "Vigil 是自由软件，依据 GNU Affero General Public License 第 3 版或任何更高版本（AGPL-3.0-or-later）发布，可按该许可证的条款再分发和修改。Vigil 不提供任何担保。",
+      "desc": "Vigil 是自由软件，依据 MIT 许可证发布，可按该许可证的条款再分发和修改。Vigil 不提供任何担保。",
       "view": "查看许可证"
     },
     "notices": {

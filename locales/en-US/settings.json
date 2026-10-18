@@ -335,7 +335,7 @@
     },
     "license": {
       "title": "License",
-      "desc": "Vigil is free software, released under the GNU Affero General Public License, version 3 or any later version (AGPL-3.0-or-later). It can be redistributed and modified under the terms of that license. Vigil comes with no warranty.",
+      "desc": "Vigil is free software, released under the the MIT License. It can be redistributed and modified under the terms of that license. Vigil comes with no warranty.",
       "view": "View license"
     },
     "notices": {

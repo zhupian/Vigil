@@ -29,7 +29,7 @@ use tauri_plugin_updater::{Error, Update, UpdaterExt};
 
 use crate::settings::{SettingsStore, UpdateChannel, UpdateRoute};
 
-const REPO: &str = "https://github.com/Ray-lea/Vigil";
+const REPO: &str = "https://github.com/zhupian/Vigil";
 /// Public GitHub proxies that served release downloads byte for byte when
 /// they were picked (2026-10). They come and go; users can enter their own.
 pub const PROXY_PRESETS: [&str; 3] = [

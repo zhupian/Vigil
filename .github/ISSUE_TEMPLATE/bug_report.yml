@@ -5,9 +5,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        提交前请先搜索已有的 Issue。安全漏洞请勿在此提交，按[安全策略](https://github.com/Ray-lea/Vigil/security/policy)私下报告。中文或英文均可。
+        提交前请先搜索已有的 Issue。安全漏洞请勿在此提交，按[安全策略](https://github.com/zhupian/Vigil/security/policy)私下报告。中文或英文均可。
 
-        Please search existing issues first. Do not report security vulnerabilities here; report them privately as described in the [security policy](https://github.com/Ray-lea/Vigil/security/policy). Chinese or English is fine.
+        Please search existing issues first. Do not report security vulnerabilities here; report them privately as described in the [security policy](https://github.com/zhupian/Vigil/security/policy). Chinese or English is fine.
   - type: input
     id: version
     attributes:

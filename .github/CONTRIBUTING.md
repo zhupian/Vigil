@@ -42,4 +42,4 @@ pnpm commitlint origin/main..HEAD
 
 ## 许可
 
-提交到本仓库的贡献，按与项目相同的 [GNU Affero General Public License 第 3 版或任何更高版本](../LICENSE)（AGPL-3.0-or-later）授权。
+提交到本仓库的贡献，按与项目相同的 [MIT 许可证](../LICENSE) 授权。

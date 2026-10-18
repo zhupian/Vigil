@@ -144,8 +144,8 @@ gh run watch    # 选择刚开始的 Check，等待结束
 ```powershell
 New-Item -ItemType Directory -Force "$env:USERPROFILE\.tauri" | Out-Null
 pnpm.cmd tauri signer generate -w "$env:USERPROFILE\.tauri\vigil-updater.key"
-gh secret set TAURI_SIGNING_PRIVATE_KEY --repo Ray-lea/Vigil --body (Get-Content -Raw "$env:USERPROFILE\.tauri\vigil-updater.key").Trim()
-gh secret set TAURI_SIGNING_PRIVATE_KEY_PASSWORD --repo Ray-lea/Vigil
+gh secret set TAURI_SIGNING_PRIVATE_KEY --repo zhupian/Vigil --body (Get-Content -Raw "$env:USERPROFILE\.tauri\vigil-updater.key").Trim()
+gh secret set TAURI_SIGNING_PRIVATE_KEY_PASSWORD --repo zhupian/Vigil
 ```
 
 再把 `vigil-updater.key.pub` 的内容填进 `src-tauri/tauri.conf.json` 的 `plugins.updater.pubkey` 并提交。私钥和密码要离线备份：丢失后只能换一把新密钥，而已安装的版本只认旧公钥，用户必须手动下载新版本重新安装一次。
@@ -174,7 +174,7 @@ gh secret set TAURI_SIGNING_PRIVATE_KEY_PASSWORD --repo Ray-lea/Vigil
    gh release edit vX.Y.Z --prerelease
    gh release edit vX.Y.W --latest   # 上一个稳定版
    gh release view --json tagName    # 应为上一个稳定版
-   curl -sL https://github.com/Ray-lea/Vigil/releases/latest/download/latest.json   # version 应为上一个版本
+   curl -sL https://github.com/zhupian/Vigil/releases/latest/download/latest.json   # version 应为上一个版本
    ```
 
    GitHub 的最新稳定版不包括 Pre-release，`releases/latest/download/` 随之指向上一个稳定版的 `latest.json` 与 `beta.json`，旧版本检查时得到“已是最新版本”。不要只删除这两份清单：地址会返回 404，检查失败后，0.2 及之后的版本保留已下载的更新，仍可安装；下载线路为“自动”时还会改用加速代理，可能取得代理缓存的旧清单。
@@ -188,7 +188,7 @@ gh secret set TAURI_SIGNING_PRIVATE_KEY_PASSWORD --repo Ray-lea/Vigil
 gh release download vX.Y.W --pattern latest.json --dir rollback   # 最新稳定版
 mv rollback/latest.json rollback/beta.json
 gh release upload vX.Y.W rollback/beta.json --clobber
-curl -sL https://github.com/Ray-lea/Vigil/releases/latest/download/beta.json   # version 应为该稳定版
+curl -sL https://github.com/zhupian/Vigil/releases/latest/download/beta.json   # version 应为该稳定版
 ```
 
 此后第 2、3 步同样适用于测试版通道的用户。修复后发布新的测试版或稳定版时，`release.yml` 会再次写入 `beta.json`。

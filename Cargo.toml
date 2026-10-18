@@ -3,12 +3,12 @@ resolver = "3"
 members = ["crates/vigil-core", "crates/vigil-service", "src-tauri"]
 
 [workspace.package]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
-license = "AGPL-3.0-or-later"
-authors = ["Vigil contributors"]
-repository = "https://github.com/Ray-lea/Vigil"
-homepage = "https://github.com/Ray-lea/Vigil"
+license = "MIT"
+authors = ["zhupian"]
+repository = "https://github.com/zhupian/Vigil"
+homepage = "https://github.com/zhupian/Vigil"
 
 [workspace.dependencies]
 # One feature set for every build. Cargo unifies features only across the
