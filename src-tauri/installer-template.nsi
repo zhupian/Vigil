@@ -539,7 +539,7 @@ Section Uninstall
   ; minutes and hold its data folder, which is deleted below when asked.
   ${If} $DeleteAppDataCheckboxState = 1
   ${AndIf} $UpdateMode <> 1
-    ExecWait '"$INSTDIR\${MAINBINARYNAME}.exe" --vigil-uninstall-close'
+    ExecWait '"$INSTDIR\${MAINBINARYNAME}.exe" --vigil-close-copies'
   ${EndIf}
 
   ; Delete the app directory and its content from disk
