@@ -238,11 +238,15 @@ Var VigilPressedRef
   !insertmacro VigilPaint ${OUT} ${ROLE}
 !macroend
 
-; A link-colored line of text, W wide and centered at Y.
-!macro VigilLink OUT Y W TEXT
-  IntOp $R0 $VigilWidth - ${W}
+; A link-colored line of text centered at Y. nsDialogs draws a link's text
+; from the control's left edge in a box 2 pixels wider than the text, so the
+; control is that wide.
+!macro VigilLink OUT Y TEXT
+  !insertmacro VigilTextWidth $R5 "${TEXT}" $VigilFontBody
+  IntOp $R5 $R5 + 2
+  IntOp $R0 $VigilWidth - $R5
   IntOp $R0 $R0 / 2
-  !insertmacro VigilControl ${OUT} dialog LINK ${__NSD_Link_STYLE} 0 $R0 ${Y} ${W} 22 "${TEXT}" $VigilFontBody
+  !insertmacro VigilControl ${OUT} dialog LINK ${__NSD_Link_STYLE} 0 $R0 ${Y} $R5 22 "${TEXT}" $VigilFontBody
   !insertmacro VigilPaint ${OUT} link
 !macroend
 
@@ -268,11 +272,12 @@ Var VigilPressedRef
 
 ; A check box with its label, centered together at Y; OUT is the box. A themed
 ; check box draws its own text color, so the label is a separate control, and
-; clicking it toggles the box.
+; clicking it toggles the box. The label has room to spare on its right, which
+; the centering leaves out.
 !macro VigilCheck OUT Y TEXT CHECKED
   !insertmacro VigilTextWidth $R5 "${TEXT}" $VigilFontBody
-  IntOp $R5 $R5 + 8
   IntOp $R0 $R5 + 24
+  IntOp $R5 $R5 + 8
   IntOp $R0 $VigilWidth - $R0
   IntOp $R0 $R0 / 2
   IntOp $R6 ${Y} + 2
@@ -798,7 +803,7 @@ Function VigilPageFinish
   !insertmacro VigilCheck $1 185 "$(VigilDesktopShortcut)" $2
   !insertmacro VigilButton $1 228 176 "$(VigilLaunch)" 1
   ${NSD_OnClick} $1 VigilNext
-  !insertmacro VigilLink $1 280 80 "$(VigilClose)"
+  !insertmacro VigilLink $1 280 "$(VigilClose)"
   ${NSD_OnClick} $1 VigilCloseOnly
 
   Call VigilHideButtons
@@ -837,7 +842,7 @@ Function un.VigilPageConfirm
   !insertmacro VigilCheck $1 185 "$(VigilDeleteData)" 0
   !insertmacro VigilButton $1 228 176 "$(VigilUninstall)" 1
   ${NSD_OnClick} $1 un.VigilNext
-  !insertmacro VigilLink $1 280 80 "$(VigilCancel)"
+  !insertmacro VigilLink $1 280 "$(VigilCancel)"
   ${NSD_OnClick} $1 un.VigilQuit
 
   Call un.VigilHideButtons
