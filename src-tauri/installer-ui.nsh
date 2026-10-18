@@ -74,6 +74,8 @@ LangString VigilUninstallText ${LANG_ENGLISH} "Vigil ${VERSION} will be removed 
 LangString VigilUninstallText ${LANG_SIMPCHINESE} "将从本机移除 Vigil ${VERSION}。"
 LangString VigilDeleteData ${LANG_ENGLISH} "Also delete settings, history and logs"
 LangString VigilDeleteData ${LANG_SIMPCHINESE} "同时删除设置、历史记录与日志"
+LangString VigilDataLeft ${LANG_ENGLISH} "Some settings, history or logs couldn't be deleted. They can be deleted by hand:"
+LangString VigilDataLeft ${LANG_SIMPCHINESE} "部分设置、历史记录或日志未能删除，可手动删除："
 LangString VigilUninstall ${LANG_ENGLISH} "Uninstall"
 LangString VigilUninstall ${LANG_SIMPCHINESE} "卸载"
 LangString VigilCancel ${LANG_ENGLISH} "Cancel"
